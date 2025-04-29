@@ -13,3 +13,4 @@ To add tmux config in current USER:
 ```
 make tmux_conf
 ```
+This command will require superuser rights to add an executable tmux_git_status.sh
