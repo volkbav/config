@@ -1,27 +1,30 @@
 #!/bin/bash
 
-# Проверяем, что мы в git-репозитории
-if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
-  # Получаем имя ветки или тега
-  branch=$(git symbolic-ref --short HEAD 2>/dev/null || git describe --tags --exact-match)
+# Находим git репозиторий
+dir=$(tmux display-message -p "#{pane_current_path}")
+cd "$dir" || exit
 
-  # Проверяем наличие незакоммиченных изменений
-  dirty=$(git status --porcelain 2>/dev/null | wc -l | tr -d ' ')
+if git rev-parse --is-inside-work-tree &>/dev/null; then
+  branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+  dirty=$(git status --porcelain 2>/dev/null)
 
-  # Проверяем наличие коммитов, ожидающих push
-  upstream=$(git rev-list --count --left-only @{u}...HEAD 2>/dev/null)
-
-  # Формируем статус
-  status="$branch"
-  if [ "$dirty" -gt 0 ]; then
-    status+=" ⚡"
+  if [[ -n "$dirty" ]]; then
+    color="colour160"  # Красный
+    state="✗"
   else
-    status+=" 🟢"
+    git remote update &>/dev/null
+    ahead=$(git status -sb 2>/dev/null | grep -o '\[ahead [0-9]\+\]')
+    if [[ -n "$ahead" ]]; then
+      color="colour220"  # Жёлтый
+      state="⇡"
+    else
+      color="colour34"  # Зелёный
+      state="✓"
+    fi
   fi
 
-  if [ "$upstream" -gt 0 ]; then
-    status+=" ⬆"
-  fi
-
-  echo "$status"
+  echo "#[fg=$color] $branch $state"
+else
+  echo ""
 fi
+
