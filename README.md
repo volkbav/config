@@ -2,13 +2,14 @@
 my configs for study and workflow
 
 # tmux
-tmux conf:
+Add git branch in status
+Switch on mouse in tmux
+Add git status:
+    red - changes is not commited
+    yellow - changes is commited, not pushed
+    green - clear repositories
 
+To add tmux config in current USER:
 ```
-~/.tmux.conf
-```
-to update conf (make command in tmux):
-
-```
-tmux source-file ~/.tmux.conf
+make tmux_conf
 ```
