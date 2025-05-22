@@ -7,12 +7,16 @@ if git rev-parse --is-inside-work-tree &>/dev/null; then
   branch=$(git symbolic-ref --short HEAD 2>/dev/null)
   dirty=$(git status --porcelain 2>/dev/null)
 
+  # По умолчанию
+  color="colour34"
+  state="✓"
+
   if ! git rev-parse HEAD &>/dev/null; then
     # Нет ни одного коммита
     color="colour160"
     state="⨯"
   elif [[ -n "$dirty" ]]; then
-    # Есть несохранённые изменения
+    # Несохранённые изменения
     color="colour160"
     state="✗"
   elif ! git rev-parse --abbrev-ref --symbolic-full-name @{u} &>/dev/null; then
